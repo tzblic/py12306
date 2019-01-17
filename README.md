@@ -3,7 +3,7 @@
 
 ## 前言
 今年回家的票明显要难买很多，早早就答应了父母今年的票没问题，到现在一张票没买到，虽然家里已经订了汽车票，让我不用操心，但是想想他们一行还有小孩，心还是很伤的。
-这段时间从 12306Bypass 到 testerSunshine 大佬写的 [12306](https://github.com/testerSunshine/12306)，还是没抢到票，索性就自己写了一个，希望也能帮助到更多人
+这段时间从 12306Bypass 到 testerSunshine 大佬写的 [12306](https://github.com/testerSunshine/12306)，还是没买到票，索性就自己写了一个，希望也能帮助到更多人
 
 ## Features
 - [x] 多日期查询余票
@@ -96,7 +96,7 @@ curl https://raw.githubusercontent.com/pjialin/py12306/master/env.docker.py.exam
 
 **2. 修改好配置后运行**
 ```bash
-docker run -d -v $(pwd):/config -v py12306:/data pjialin/py12306
+docker run --rm --name py12306 -p 8008:8008 -d -v $(pwd):/config -v py12306:/data pjialin/py12306
 ```
 当前目录会多一个 12306.log 的日志文件， `tail -f 12306.log`
 
