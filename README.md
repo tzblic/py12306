@@ -41,7 +41,7 @@ cp env.py.example env.py
 
 语音通知
 
-语音验证码使用的是阿里云 API 市场上的一个服务商，需要到 [https://market.aliyun.com/products/57126001/cmapi019902.html](https://market.aliyun.com/products/57126001/cmapi019902.html) 购买后将 appcode 填写到配置中
+语音验证码使用的是阿里云 API 市场上的一个服务商，需要到 [https://market.aliyun.com/products/56928004/cmapi026600.html](https://market.aliyun.com/products/56928004/cmapi026600.html) 购买后将 appcode 填写到配置中
 
 **3. 启动前测试**
 
@@ -87,7 +87,7 @@ python main.py
 
 
 ## Docker 使用
-**1. 将配置文件下载到本地***
+**1. 将配置文件下载到本地**
 ```bash
 docker run --rm pjialin/py12306 cat /config/env.py > env.py
 # 或
@@ -99,6 +99,19 @@ curl https://raw.githubusercontent.com/pjialin/py12306/master/env.docker.py.exam
 docker run --rm --name py12306 -p 8008:8008 -d -v $(pwd):/config -v py12306:/data pjialin/py12306
 ```
 当前目录会多一个 12306.log 的日志文件， `tail -f 12306.log`
+
+### Docker-compose 中使用
+**1. 复制配置文件**
+```
+cp docker-compose.yml.example docker-compose.yml
+```
+
+**2. 从 docker-compose 运行**
+
+在`docker-compose.yml`所在的目录使用命令
+```
+docker-compose up -d
+```
 
 ## Web 管理页面
 
@@ -121,7 +134,8 @@ docker run --rm --name py12306 -p 8008:8008 -d -v $(pwd):/config -v py12306:/dat
     - 新增 钉钉通知
     - 新增 Telegram 通知
     - 新增 ServerChan 和 PushBear 微信推送
-
+- 19-01-18
+    - 新增 CDN 查询
 
 ## 截图
 ### Web 管理页面
@@ -134,6 +148,9 @@ docker run --rm --name py12306 -p 8008:8008 -d -v $(pwd):/config -v py12306:/dat
 目前查询和登录操作是分开的，查询是不依赖用户是否登录，放在 A 云 T 云容易被限制 ip，建议在其它网络环境下运行
 
 交流群 [274781597](http://shang.qq.com/wpa/qunwpa?idkey=8eab0b6402096266a62263c1cd452149926adb5cba7a2b7a98a5adc65869addf)
+
+### Online IDE
+[![在 Gitpod 中打开](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io#https://github.com/pjialin/py12306)
 
 ## Thanks
 - 感谢大佬 [testerSunshine](https://github.com/testerSunshine/12306)，借鉴了部分实现
