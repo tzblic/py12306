@@ -77,7 +77,7 @@ class Order:
     def order_did_success(self):
         OrderLog.print_ticket_did_ordered(self.order_id)
         OrderLog.notification(OrderLog.MESSAGE_ORDER_SUCCESS_NOTIFICATION_TITLE,
-                              OrderLog.MESSAGE_ORDER_SUCCESS_NOTIFICATION_CONTENT)
+                              OrderLog.MESSAGE_ORDER_SUCCESS_NOTIFICATION_CONTENT.format(self.user_ins.user_name))
         self.send_notification()
         return True
 
@@ -85,7 +85,7 @@ class Order:
         # num = 0  # 通知次数
         # sustain_time = self.notification_sustain_time
         info_message = OrderLog.get_order_success_notification_info(self.query_ins)
-        normal_message = OrderLog.MESSAGE_ORDER_SUCCESS_NOTIFICATION_OF_EMAIL_CONTENT.format(self.order_id)
+        normal_message = OrderLog.MESSAGE_ORDER_SUCCESS_NOTIFICATION_OF_EMAIL_CONTENT.format(self.order_id, self.user_ins.user_name)
         if Config().EMAIL_ENABLED:  # 邮件通知
             Notification.send_email(Config().EMAIL_RECEIVER, OrderLog.MESSAGE_ORDER_SUCCESS_NOTIFICATION_TITLE,
                                     normal_message + info_message)
@@ -141,8 +141,10 @@ class Order:
             return True
         else:
             if (str(result.get('messages', '')).find('未处理') >= 0):  # 未处理订单
-                self.order_id = 0  # 需要拿到订单号 TODO
-                return -1
+                # 0125 增加排队时长到 5 分钟之后，更多的是 排队失败，得通过拿到订单列表才能确认，再打个 TODO
+                # self.order_id = 0  # 需要拿到订单号 TODO
+                # return -1
+                pass
             OrderLog.add_quick_log(
                 OrderLog.MESSAGE_SUBMIT_ORDER_REQUEST_FAIL.format(
                     result.get('messages', CommonLog.MESSAGE_RESPONSE_EMPTY_ERROR))).flush()
@@ -244,9 +246,12 @@ class Order:
             ticket = result.get('data.ticket').split(',')  # 余票列表
             # 这里可以判断 是真实是 硬座还是无座，避免自动分配到无座
             ticket_number = ticket[0]  # 余票
-            if ticket_number != '充足' or int(ticket_number) <= 0:
+            if ticket_number != '充足' and int(ticket_number) <= 0:
                 if self.query_ins.current_seat == SeatType.NO_SEAT:  # 允许无座
                     ticket_number = ticket[1]
+                if not int(ticket_number): # 跳过无座
+                    OrderLog.add_quick_log(OrderLog.MESSAGE_GET_QUEUE_INFO_NO_SEAT).flush()
+                    return False
 
             if result.get('data.op_2') == 'true':
                 OrderLog.add_quick_log(OrderLog.MESSAGE_GET_QUEUE_LESS_TICKET).flush()
